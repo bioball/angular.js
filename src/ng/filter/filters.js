@@ -445,20 +445,30 @@ function dateFilter($locale) {
     return string;
   }
 
+  function isValidDateObj(date){
+    return !isNaN(dateObj.getTime());
+  }
+
 
   return function(date, format, timezone) {
     var text = '',
         parts = [],
-        fn, match;
+        fn, match,
+        dateObj;
 
     format = format || 'mediumDate';
     format = $locale.DATETIME_FORMATS[format] || format;
-    if (isString(date)) {
-      date = NUMBER_STRING.test(date) ? int(date) : jsonStringToDate(date);
+
+    if (isString(date) && !isNaN(+date)) {
+      date = +date;
     }
 
-    if (isNumber(date)) {
-      date = new Date(date);
+    dateObj = new Date(date);
+
+    if (isValidDateObj(dateObj)) {
+      date = dateObj;
+    } else {
+      date = jsonStringToDate(date);
     }
 
     if (!isDate(date)) {
